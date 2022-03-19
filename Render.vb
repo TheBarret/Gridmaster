@@ -2,7 +2,6 @@
 
 Public Class Render
     Public Property Session As Session
-    Public Property Noce As Node
     Private Sub Render_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Session = New Session(Me.Viewport)
         Me.Session.Start()
@@ -21,12 +20,8 @@ Public Class Render
         Dim position As Point = Me.Viewport.PointToClient(Cursor.Position)
         Dim node As Node = Nothing
         If (Me.Session.Camera.GetNodeAt(position.X, position.Y, node)) Then
-            If (Me.Noce IsNot Nothing) Then
-                Me.Noce.Selected = False
-            End If
             Me.pGrid.SelectedObject = node
-            Me.Noce = node
-            Me.Noce.Selected = True
+            Me.Session.Active = node
         End If
     End Sub
 End Class

@@ -11,6 +11,7 @@ Public Class Session
     <Browsable(False)> Public Property Terrain As Terrain
     <Browsable(False)> Public Property Scale As Single
     <Browsable(False)> Public Property Seed As Integer
+    <Browsable(False)> Public Property Active As Node
     <Browsable(False)> Public Property Font As Dictionary(Of Fonts, Font)
 
     Sub New(ctl As Control)

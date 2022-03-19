@@ -11,10 +11,17 @@ Namespace Generators
             Next
             Return buffer
         End Function
+
         Public Shared Function Number(min As Integer, max As Integer) As Integer
             Dim r As New Random(Randomizer.Seed)
             Return r.Next(min, max)
         End Function
+
+        Public Shared Function Float(min As Single, max As Single) As Double
+            Dim r As New Random(Randomizer.Seed)
+            Return (r.NextDouble * (max - min) + min)
+        End Function
+
         Public Shared Function Seed() As Integer
             Static r As RandomNumberGenerator = RandomNumberGenerator.Create
             Dim bytes As Byte() = New Byte(3) {}

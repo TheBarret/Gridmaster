@@ -1,10 +1,15 @@
-﻿Namespace World
+﻿
+Imports System.Diagnostics.Metrics
+Imports Gridmaster.Generators
+
+Namespace World
     Public Class Terrain
         Public Property Owner As Session
         Public Property Data As Single(,)
-
+        Public Property Filter As Resources
         Sub New(owner As Session)
             Me.Owner = owner
+            Me.Filter = Resources.Unset
             Me.Generate(Me.Owner.Map.NodeRow, Me.Owner.Map.NodeColumn)
             Me.Initialize(Me.Owner.Map.Nodes)
         End Sub
@@ -13,25 +18,82 @@
         ''' Draws the node with corresponding terrain data.
         ''' </summary>
         Public Sub Draw(g As Graphics, n As Node, r As RectangleF)
-            If (n.Selected) Then
-                g.FillRectangle(Brushes.IndianRed, r)
-                g.DrawRectangle(Pens.Black, r.X, r.Y, r.Width, r.Height)
-            Else
-                Select Case n.Type
-                    Case TerrainType.Water
-                        g.FillRectangle(Brushes.SteelBlue, r)
-                    Case TerrainType.Sand
-                        g.FillRectangle(Brushes.Khaki, r)
-                    Case TerrainType.Grass
-                        g.FillRectangle(Brushes.DarkGreen, r)
-                    Case TerrainType.Dirt
-                        g.FillRectangle(Brushes.SaddleBrown, r)
-                    Case TerrainType.Gravel
-                        g.FillRectangle(Brushes.DimGray, r)
-                    Case TerrainType.Rock
-                        g.FillRectangle(Brushes.Gray, r)
-                End Select
-                g.DrawRectangle(Pens.Black, r.X, r.Y, r.Width, r.Height)
+            Select Case n.Type
+                Case TerrainType.Water
+                    g.FillRectangle(Brushes.SteelBlue, r)
+                Case TerrainType.Sand
+                    g.FillRectangle(Brushes.Khaki, r)
+                Case TerrainType.Grass
+                    g.FillRectangle(Brushes.DarkGreen, r)
+                Case TerrainType.Dirt
+                    g.FillRectangle(Brushes.SaddleBrown, r)
+                Case TerrainType.Gravel
+                    g.FillRectangle(Brushes.DimGray, r)
+                Case TerrainType.Rock
+                    g.FillRectangle(Brushes.Gray, r)
+            End Select
+        End Sub
+
+        Public Sub DrawFilter(g As Graphics, n As Node)
+            Select Case Me.Filter
+                Case Resources.Rock
+
+                Case Resources.Iron
+                Case Resources.Copper
+                Case Resources.Coal
+                Case Resources.Gold
+                Case Resources.Diamond
+            End Select
+        End Sub
+
+        'a function that return a gradient color.
+        'colors: black red yellow white
+        'values: 0 to 255
+        Public Function Gradient(n As Node) As Color
+            If (n.Resource.ContainsKey(Me.Filter)) Then
+                Dim value As Double = n.Resource(Me.Filter)
+
+            End If
+        End Function
+
+
+        ''' <summary>
+        ''' Draws the neighbor labels using cardinal directions.
+        ''' </summary>
+        Public Sub DrawOverlay(g As Graphics, n As Node, r As RectangleF)
+            If (Me.Owner.Active Is n) Then
+                Using sf As New StringFormat
+                    g.DrawRectangle(Pens.Black, r.X, r.Y, r.Width, r.Height)
+                    For Each nb In n.Neighbors
+                        Select Case nb.Key
+                            Case Direction.North
+                                sf.Alignment = StringAlignment.Center
+                                sf.LineAlignment = StringAlignment.Near
+                            Case Direction.NorthEast
+                                sf.Alignment = StringAlignment.Far
+                                sf.LineAlignment = StringAlignment.Near
+                            Case Direction.East
+                                sf.Alignment = StringAlignment.Far
+                                sf.LineAlignment = StringAlignment.Center
+                            Case Direction.SouthEast
+                                sf.Alignment = StringAlignment.Far
+                                sf.LineAlignment = StringAlignment.Far
+                            Case Direction.South
+                                sf.Alignment = StringAlignment.Center
+                                sf.LineAlignment = StringAlignment.Far
+                            Case Direction.SouthWest
+                                sf.Alignment = StringAlignment.Near
+                                sf.LineAlignment = StringAlignment.Far
+                            Case Direction.West
+                                sf.Alignment = StringAlignment.Near
+                                sf.LineAlignment = StringAlignment.Center
+                            Case Direction.NorthWest
+                                sf.Alignment = StringAlignment.Near
+                                sf.LineAlignment = StringAlignment.Near
+                        End Select
+                        g.DrawString(nb.Key.ToLabel, Me.Owner.Font(Fonts.Small), Brushes.Black, r, sf)
+                    Next
+                End Using
             End If
         End Sub
 
@@ -63,6 +125,7 @@
                             nodes(i, j).Type = TerrainType.Water
                     End Select
                     nodes(i, j).Noise = Me.Data(i, j)
+                    nodes(i, j).Populate()
                 Next
             Next
             If (disposeNoise) Then

@@ -1,4 +1,6 @@
-﻿Namespace World
+﻿Imports System.IO
+
+Namespace World
     Public Class Map
         Inherits NodeArray
 
@@ -13,6 +15,7 @@
             Me.Width = session.Viewport.ClientRectangle.Width
             Me.Height = session.Viewport.ClientRectangle.Height
             Me.Nodes = Me.Create()
+            Me.ForEach(AddressOf Me.ScanSurroundingNodes)
         End Sub
 
         ''' <summary>
@@ -47,8 +50,10 @@
             For row As Integer = 0 To Me.NodeRow - 1
                 For column As Integer = 0 To Me.NodeColumn - 1
                     buffer(row, column) = New Node(Me.Owner, index, row, column, New Rectangle(xpos, ypos, Me.Owner.Size, Me.Owner.Size))
+
                     index += 1
                     xpos += Me.Owner.Size
+
                     If (xpos >= Me.Width) Then
                         xpos = 0
                         ypos += Me.Owner.Size
@@ -59,12 +64,68 @@
         End Function
 
         ''' <summary>
+        ''' A function that works the same as way as List<T>.ForEach.
+        ''' </summary>
+        Public Sub ForEach(method As Action(Of Node))
+            For row As Integer = 0 To Me.NodeRow - 1
+                For column As Integer = 0 To Me.NodeColumn - 1
+                    method.Invoke(Me.Nodes(row, column))
+                Next
+            Next
+        End Sub
+
+        ''' <summary>
+        ''' Scans the node array for neighbors.
+        ''' </summary>
+        Public Function ScanSurroundingNodes(node As Node) As Boolean
+            Dim row As Integer = node.Row
+            Dim column As Integer = node.Column
+
+            If (Me.IsValid(row, column - 1)) Then
+                node.Neighbors.Add(Direction.North, Me.Nodes(row, column - 1))
+            End If
+            If (Me.IsValid(row + 1, column - 1)) Then
+                node.Neighbors.Add(Direction.NorthEast, Me.Nodes(row + 1, column - 1))
+            End If
+            If (Me.IsValid(row + 1, column)) Then
+                node.Neighbors.Add(Direction.East, Me.Nodes(row + 1, column))
+            End If
+            If (Me.IsValid(row + 1, column + 1)) Then
+                node.Neighbors.Add(Direction.SouthEast, Me.Nodes(row + 1, column + 1))
+            End If
+            If (Me.IsValid(row, column + 1)) Then
+                node.Neighbors.Add(Direction.South, Me.Nodes(row, column + 1))
+            End If
+            If (Me.IsValid(row - 1, column + 1)) Then
+                node.Neighbors.Add(Direction.SouthWest, Me.Nodes(row - 1, column + 1))
+            End If
+            If (Me.IsValid(row - 1, column)) Then
+                node.Neighbors.Add(Direction.West, Me.Nodes(row - 1, column))
+            End If
+            If (Me.IsValid(row - 1, column - 1)) Then
+                node.Neighbors.Add(Direction.NorthWest, Me.Nodes(row - 1, column - 1))
+            End If
+            Return node.Neighbors.Any
+        End Function
+
+        ''' <summary>
         ''' Gets the total amount of nodes on the map.
         ''' </summary>
         ''' <returns></returns>
         Public ReadOnly Property Total As Integer
             Get
                 Return Me.NodeRow * Me.NodeColumn
+            End Get
+        End Property
+
+        ''' <summary>
+        ''' Checks if a given row and column is a valid position.
+        ''' </summary>
+        Public ReadOnly Property IsValid(row As Integer, column As Integer) As Boolean
+            Get
+                Dim r As Integer = Me.Nodes.GetLength(0) - 1
+                Dim c As Integer = Me.Nodes.GetLength(1) - 1
+                Return (row >= 0 AndAlso row <= r AndAlso column >= 0 AndAlso column <= c)
             End Get
         End Property
 

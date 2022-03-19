@@ -45,6 +45,9 @@ Public MustInherit Class Engine
                     If (Not Me.Updating) Then
                         Using bm As New Bitmap(Me.Viewport.Width, Me.Viewport.Height)
                             Using g As Graphics = Graphics.FromImage(bm)
+
+                                g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+
                                 Me.Draw(g)
                                 Me.Buffer = CType(bm.Clone, Bitmap)
                                 Me.Update(CType(bm.Clone, Bitmap))

@@ -1,11 +1,12 @@
-﻿Namespace World
+﻿Imports Gridmaster.Generators
+
+Namespace World
     Public Class Camera
         Inherits NodeArray
         Public Property Owner As Session
         Public Property Index As Node
         Public Property Width As Integer
         Public Property Height As Integer
-
         Sub New(owner As Session)
             Me.Owner = owner
             Me.Index = owner.Map.First
@@ -22,6 +23,7 @@
                 Dim result As Boolean = False
                 Dim cr As Integer = Me.Index.Row
                 Dim cc As Integer = Me.Index.Column
+
                 Select Case dir
                     Case Direction.North
                         result = Me.Owner.Map.GetNode(cr, cc - 1, Me.Index)
@@ -32,7 +34,10 @@
                     Case Direction.West
                         result = Me.Owner.Map.GetNode(cr - 1, cc, Me.Index)
                 End Select
-                If (result) Then Me.Nodes = Me.Create
+                If (result) Then
+                    Me.Owner.Active = Nothing
+                    Me.Nodes = Me.Create
+                End If
                 Return result
             End If
             Return False
@@ -68,14 +73,28 @@
                 For column As Integer = 0 To Me.Nodes.GetLength(1) - 1
                     n = Me.Nodes(row, column)
                     r = New RectangleF(xpos, ypos, n.Rectangle.Width * Me.Owner.CZoom, n.Rectangle.Height * Me.Owner.CZoom)
-
+                    If (n.Camera.IsEmpty) Then n.Camera = r
                     Me.Owner.Terrain.Draw(g, n, r)
-
                     xpos += r.Width
                 Next
                 xpos = 0
                 ypos += r.Height
             Next
+
+            xpos = 0
+            ypos = 0
+
+            For row As Integer = 0 To Me.Nodes.GetLength(0) - 1
+                For column As Integer = 0 To Me.Nodes.GetLength(1) - 1
+                    n = Me.Nodes(row, column)
+                    r = New RectangleF(xpos, ypos, n.Rectangle.Width * Me.Owner.CZoom, n.Rectangle.Height * Me.Owner.CZoom)
+                    Me.Owner.Terrain.DrawOverlay(g, Me.Nodes(row, column), r)
+                    xpos += r.Width
+                Next
+                xpos = 0
+                ypos += r.Height
+            Next
+
         End Sub
 
         ''' <summary>
