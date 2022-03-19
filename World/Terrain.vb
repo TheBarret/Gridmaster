@@ -2,6 +2,7 @@
     Public Class Terrain
         Public Property Owner As Session
         Public Property Data As Single(,)
+
         Sub New(owner As Session)
             Me.Owner = owner
             Me.Generate(Me.Owner.Map.NodeRow, Me.Owner.Map.NodeColumn)
@@ -12,20 +13,26 @@
         ''' Draws the node with corresponding terrain data.
         ''' </summary>
         Public Sub Draw(g As Graphics, n As Node, r As RectangleF)
-            Select Case n.Type
-                Case TerrainType.Water
-                    g.FillRectangle(Brushes.SteelBlue, r)
-                Case TerrainType.Sand
-                    g.FillRectangle(Brushes.Khaki, r)
-                Case TerrainType.Grass
-                    g.FillRectangle(Brushes.DarkGreen, r)
-                Case TerrainType.Dirt
-                    g.FillRectangle(Brushes.SaddleBrown, r)
-                Case TerrainType.Gravel
-                    g.FillRectangle(Brushes.DimGray, r)
-                Case TerrainType.Rock
-                    g.FillRectangle(Brushes.Gray, r)
-            End Select
+            If (n.Selected) Then
+                g.FillRectangle(Brushes.IndianRed, r)
+                g.DrawRectangle(Pens.Black, r.X, r.Y, r.Width, r.Height)
+            Else
+                Select Case n.Type
+                    Case TerrainType.Water
+                        g.FillRectangle(Brushes.SteelBlue, r)
+                    Case TerrainType.Sand
+                        g.FillRectangle(Brushes.Khaki, r)
+                    Case TerrainType.Grass
+                        g.FillRectangle(Brushes.DarkGreen, r)
+                    Case TerrainType.Dirt
+                        g.FillRectangle(Brushes.SaddleBrown, r)
+                    Case TerrainType.Gravel
+                        g.FillRectangle(Brushes.DimGray, r)
+                    Case TerrainType.Rock
+                        g.FillRectangle(Brushes.Gray, r)
+                End Select
+                g.DrawRectangle(Pens.Black, r.X, r.Y, r.Width, r.Height)
+            End If
         End Sub
 
         ''' <summary>
@@ -38,7 +45,7 @@
         ''' <summary>
         ''' Populate the terrain data for nodes.
         ''' </summary>
-        Public Sub Initialize(nodes As Node(,))
+        Public Sub Initialize(nodes As Node(,), Optional disposeNoise As Boolean = True)
             For i As Integer = 0 To nodes.GetLength(0) - 1
                 For j As Integer = 0 To nodes.GetLength(1) - 1
                     Select Case Me.Data(i, j)
@@ -55,8 +62,12 @@
                         Case Else
                             nodes(i, j).Type = TerrainType.Water
                     End Select
+                    nodes(i, j).Noise = Me.Data(i, j)
                 Next
             Next
+            If (disposeNoise) Then
+                Me.Dispose()
+            End If
         End Sub
 
         ''' <summary>

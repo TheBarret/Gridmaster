@@ -42,7 +42,6 @@
             Me.NodeRow = Me.Width \ Me.Owner.Size
             Me.NodeColumn = Me.Height \ Me.Owner.Size
 
-
             buffer = New Node(Me.NodeRow - 1, Me.NodeColumn - 1) {}
 
             For row As Integer = 0 To Me.NodeRow - 1

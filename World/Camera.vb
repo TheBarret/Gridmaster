@@ -17,8 +17,6 @@
         ''' <summary>
         ''' Move camera in given direction.    
         ''' </summary>
-        ''' <param name="dir"></param>
-        ''' <returns></returns>
         Public Function Move(dir As Direction) As Boolean
             If (Me.CanMove(dir)) Then
                 Dim result As Boolean = False
@@ -43,8 +41,6 @@
         ''' <summary>
         ''' Checks if camera can move in given direction.
         ''' </summary>
-        ''' <param name="dir"></param>
-        ''' <returns></returns>
         Public Function CanMove(dir As Direction) As Boolean
             Select Case dir
                 Case Direction.North
@@ -62,7 +58,6 @@
         ''' <summary>
         ''' Draws current frame of the camera.
         ''' </summary>
-        ''' <param name="g"></param>
         Public Sub Draw(g As Graphics)
             Dim n As Node, r As RectangleF
             Dim xpos As Single = 0, ypos As Single = 0
@@ -73,7 +68,9 @@
                 For column As Integer = 0 To Me.Nodes.GetLength(1) - 1
                     n = Me.Nodes(row, column)
                     r = New RectangleF(xpos, ypos, n.Rectangle.Width * Me.Owner.CZoom, n.Rectangle.Height * Me.Owner.CZoom)
+
                     Me.Owner.Terrain.Draw(g, n, r)
+
                     xpos += r.Width
                 Next
                 xpos = 0
@@ -84,7 +81,6 @@
         ''' <summary>
         ''' Creates a node array for the camera with given index.
         ''' </summary>
-        ''' <returns></returns>
         Public Function Create() As Node(,)
             Dim nc As Integer = 0, nr As Integer = 0
             Dim cr As Integer = Me.Index.Row, cc As Integer = Me.Index.Column
@@ -99,6 +95,30 @@
                 nr = 0
             Next
             Return buffer
+        End Function
+
+        ''' <summary>
+        ''' Finds the node in the camera at the given coordinates, returns true if found.
+        ''' </summary>
+        Public Function GetNodeAt(x As Integer, y As Integer, ByRef result As Node) As Boolean
+            Dim xpos As Single = 0, ypos As Single = 0, r As RectangleF
+            For i As Integer = 0 To Me.Nodes.GetLength(0) - 1
+                For j As Integer = 0 To Me.Nodes.GetLength(1) - 1
+                    r = Me.Nodes(i, j).Rectangle
+                    r.X = xpos
+                    r.Y = ypos
+                    r.Width *= Me.Owner.CZoom
+                    r.Height *= Me.Owner.CZoom
+                    If (r.Contains(x, y)) Then
+                        result = Me.Nodes(i, j)
+                        Return True
+                    End If
+                    xpos += r.Width
+                Next
+                xpos = 0
+                ypos += r.Height
+            Next
+            Return False
         End Function
 
         Public Overrides Function ToString() As String

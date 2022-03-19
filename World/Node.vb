@@ -1,13 +1,17 @@
-﻿Imports Gridmaster.Generators
+﻿Imports System.ComponentModel
+Imports Gridmaster.Generators
 
 Namespace World
     Public Class Node
-        Public Property Owner As Session
-        Public Property Index As Integer
-        Public Property Row As Integer
-        Public Property Column As Integer
-        Public Property Rectangle As Rectangle
-        Public Property Type As TerrainType
+        <Browsable(False)> Public Property Owner As Session
+        <Browsable(False)> Public Property Selected As Boolean
+        <Category("Info")> <[ReadOnly](True)> Public Property Index As Integer
+        <Category("Info")> <[ReadOnly](True)> Public Property Row As Integer
+        <Category("Info")> <[ReadOnly](True)> Public Property Column As Integer
+        <Category("Info")> <[ReadOnly](True)> Public Property Rectangle As Rectangle
+        <Category("Terrain")> <[ReadOnly](True)> Public Property Type As TerrainType
+        <Category("Terrain")> <[ReadOnly](True)> Public Property Noise As Single
+
         Sub New(owner As Session, index As Integer, row As Integer, column As Integer, rect As Rectangle)
             Me.Owner = owner
             Me.Index = index
@@ -15,6 +19,7 @@ Namespace World
             Me.Column = column
             Me.Rectangle = rect
             Me.Type = TerrainType.Undefined
+            Me.Selected = False
         End Sub
 
         Public Overrides Function ToString() As String

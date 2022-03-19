@@ -1,11 +1,12 @@
 ﻿
+Imports System.ComponentModel
 Imports System.Threading
 
 Public MustInherit Class Engine
-    Public Property Running As Boolean
-    Public Property Viewport As Control
-    Public Property Buffer As Bitmap
-    Public Property Updating As Boolean
+    <Browsable(False)> Public Property Running As Boolean
+    <Browsable(False)> Public Property Viewport As Control
+    <Browsable(False)> Public Property Buffer As Bitmap
+    <Browsable(False)> Public Property Updating As Boolean
     Private Rate As Integer
     Private Elapsed As Integer
     Private Offset As Integer
