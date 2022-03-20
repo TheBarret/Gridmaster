@@ -8,7 +8,7 @@ Namespace World
         <Category("Info")> <[ReadOnly](True)> Public Property Row As Integer
         <Category("Info")> <[ReadOnly](True)> Public Property Column As Integer
         <Category("Info")> <[ReadOnly](True)> Public Property Rectangle As Rectangle
-        <Category("Info")> <[ReadOnly](True)> Public Property Camera As RectangleF
+
         <Category("Info")> <[ReadOnly](True)> Public Property Neighbors As Dictionary(Of Direction, Node)
         <Category("Info")> <[ReadOnly](True)> Public Property Resource As Dictionary(Of Resources, Double)
         <Category("Terrain")> <[ReadOnly](True)> Public Property Type As TerrainType
@@ -20,7 +20,7 @@ Namespace World
             Me.Row = row
             Me.Column = column
             Me.Rectangle = rect
-            Me.Camera = RectangleF.Empty
+
             Me.Type = TerrainType.Undefined
             Me.Neighbors = New Dictionary(Of Direction, Node)
             Me.Resource = New Dictionary(Of Resources, Double)
@@ -67,6 +67,13 @@ Namespace World
                 Return Neighbors.ContainsKey(d)
             End Get
         End Property
+
+        ''' <summary>
+        ''' Checks if a node is surrounded by a specified terrain type.
+        ''' </summary>
+        Public Function SurroundedBy(type As TerrainType) As Boolean
+            Return Me.Neighbors.Select(Function(y) y.Value.Type).All(Function(x) x = type)
+        End Function
 
         Public Overrides Function ToString() As String
             Return String.Format("Node {0} [{1},{2}] [{3}]", Me.Index, Me.Row, Me.Column, Me.Type)

@@ -10,7 +10,6 @@ Public Class Session
     <Browsable(False)> Public Property CZoom As Single
     <Browsable(False)> Public Property Terrain As Terrain
     <Browsable(False)> Public Property Scale As Single
-    <Browsable(False)> Public Property Seed As Integer
     <Browsable(False)> Public Property Active As Node
     <Browsable(False)> Public Property Font As Dictionary(Of Fonts, Font)
 
@@ -21,9 +20,7 @@ Public Class Session
         Me.Size = 8             '// Determines the node size of the map
         Me.CSize = 13           '// Determines the size of the camera
         Me.CZoom = 4.89F        '// Determines the zoom of the camera
-        Me.Seed = 0             '// Determines the seed of the noise generator
-        Me.Scale = 0.036F       '// Determines the scale of the noise generator
-
+        Me.Scale = 0.8F         '// Determines the scale of the noise generator
 
         Me.Map = New Map(Me)
         Me.Terrain = New Terrain(Me)

@@ -17,24 +17,23 @@ Namespace World
         Public Function ToLabel(d As Direction) As String
             Select Case d
                 Case Direction.North
-                    Return "N"
+                    Return "▲"
+                Case Direction.South
+                    Return "▼"
+                Case Direction.East
+                    Return "►"
+                Case Direction.West
+                    Return "◄"
                 Case Direction.NorthEast
                     Return "NE"
-                Case Direction.East
-                    Return "E"
                 Case Direction.SouthEast
                     Return "SE"
-                Case Direction.South
-                    Return "S"
                 Case Direction.SouthWest
                     Return "SW"
-                Case Direction.West
-                    Return "W"
                 Case Direction.NorthWest
                     Return "NW"
-                Case Else
-                    Return "??"
             End Select
+            Return String.Empty
         End Function
     End Module
 End Namespace

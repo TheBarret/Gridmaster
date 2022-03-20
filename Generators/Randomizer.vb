@@ -17,6 +17,11 @@ Namespace Generators
             Return r.Next(min, max)
         End Function
 
+        Public Shared Function Number64(min As Integer, max As Integer) As Int64
+            Dim r As New Random(Randomizer.Seed)
+            Return CLng(r.Next(min, max))
+        End Function
+
         Public Shared Function Float(min As Single, max As Single) As Double
             Dim r As New Random(Randomizer.Seed)
             Return (r.NextDouble * (max - min) + min)

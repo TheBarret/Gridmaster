@@ -24,8 +24,9 @@ Partial Class Render
     Private Sub InitializeComponent()
         Me.TabControl1 = New System.Windows.Forms.TabControl()
         Me.pageRender = New System.Windows.Forms.TabPage()
-        Me.Viewport = New Gridmaster.Controls.Viewport()
         Me.pGrid = New System.Windows.Forms.PropertyGrid()
+        Me.Viewport = New Gridmaster.Controls.Viewport()
+        Me.cResource = New System.Windows.Forms.ComboBox()
         Me.TabControl1.SuspendLayout()
         Me.pageRender.SuspendLayout()
         Me.SuspendLayout()
@@ -42,6 +43,7 @@ Partial Class Render
         '
         'pageRender
         '
+        Me.pageRender.Controls.Add(Me.cResource)
         Me.pageRender.Controls.Add(Me.pGrid)
         Me.pageRender.Controls.Add(Me.Viewport)
         Me.pageRender.Location = New System.Drawing.Point(4, 24)
@@ -52,6 +54,14 @@ Partial Class Render
         Me.pageRender.Text = "Simulation"
         Me.pageRender.UseVisualStyleBackColor = True
         '
+        'pGrid
+        '
+        Me.pGrid.HelpVisible = False
+        Me.pGrid.Location = New System.Drawing.Point(523, 35)
+        Me.pGrid.Name = "pGrid"
+        Me.pGrid.Size = New System.Drawing.Size(257, 481)
+        Me.pGrid.TabIndex = 2
+        '
         'Viewport
         '
         Me.Viewport.BackColor = System.Drawing.Color.Black
@@ -61,13 +71,14 @@ Partial Class Render
         Me.Viewport.Size = New System.Drawing.Size(512, 512)
         Me.Viewport.TabIndex = 1
         '
-        'pGrid
+        'cResource
         '
-        Me.pGrid.HelpVisible = False
-        Me.pGrid.Location = New System.Drawing.Point(523, 6)
-        Me.pGrid.Name = "pGrid"
-        Me.pGrid.Size = New System.Drawing.Size(257, 510)
-        Me.pGrid.TabIndex = 2
+        Me.cResource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
+        Me.cResource.FormattingEnabled = True
+        Me.cResource.Location = New System.Drawing.Point(522, 6)
+        Me.cResource.Name = "cResource"
+        Me.cResource.Size = New System.Drawing.Size(258, 23)
+        Me.cResource.TabIndex = 3
         '
         'Render
         '
@@ -92,4 +103,5 @@ Partial Class Render
     Friend WithEvents pageRender As TabPage
     Friend WithEvents Viewport As Controls.Viewport
     Friend WithEvents pGrid As PropertyGrid
+    Friend WithEvents cResource As ComboBox
 End Class

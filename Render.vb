@@ -3,6 +3,9 @@
 Public Class Render
     Public Property Session As Session
     Private Sub Render_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        Me.PopulateForm()
+
         Me.Session = New Session(Me.Viewport)
         Me.Session.Start()
 
@@ -23,6 +26,12 @@ Public Class Render
             Me.pGrid.SelectedObject = node
             Me.Session.Active = node
         End If
+    End Sub
+
+    Private Sub PopulateForm()
+        For Each r As Resources In [Enum].GetValues(GetType(Resources))
+            Me.cResource.Items.Add(r)
+        Next
     End Sub
 End Class
 

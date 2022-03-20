@@ -15,7 +15,7 @@ Namespace World
             Me.Width = session.Viewport.ClientRectangle.Width
             Me.Height = session.Viewport.ClientRectangle.Height
             Me.Nodes = Me.Create()
-            Me.ForEach(AddressOf Me.ScanSurroundingNodes)
+            Me.Batch(AddressOf Me.ScanNeighbors)
         End Sub
 
         ''' <summary>
@@ -33,7 +33,7 @@ Namespace World
         End Sub
 
         ''' <summary>
-        ''' Creates a node array that fits in the viewport using the NodeSize constant.
+        ''' Creates a node array that fits in the viewport.
         ''' </summary>
         ''' <returns></returns>
         Public Function Create() As Node(,)
@@ -64,9 +64,9 @@ Namespace World
         End Function
 
         ''' <summary>
-        ''' A function that works the same as way as List<T>.ForEach.
+        ''' A function that works the same way as collection ForEach.
         ''' </summary>
-        Public Sub ForEach(method As Action(Of Node))
+        Public Sub Batch(method As Action(Of Node))
             For row As Integer = 0 To Me.NodeRow - 1
                 For column As Integer = 0 To Me.NodeColumn - 1
                     method.Invoke(Me.Nodes(row, column))
@@ -77,7 +77,7 @@ Namespace World
         ''' <summary>
         ''' Scans the node array for neighbors.
         ''' </summary>
-        Public Function ScanSurroundingNodes(node As Node) As Boolean
+        Public Function ScanNeighbors(node As Node) As Boolean
             Dim row As Integer = node.Row
             Dim column As Integer = node.Column
 
@@ -105,6 +105,7 @@ Namespace World
             If (Me.IsValid(row - 1, column - 1)) Then
                 node.Neighbors.Add(Direction.NorthWest, Me.Nodes(row - 1, column - 1))
             End If
+
             Return node.Neighbors.Any
         End Function
 

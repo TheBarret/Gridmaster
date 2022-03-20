@@ -66,35 +66,18 @@ Namespace World
         Public Sub Draw(g As Graphics)
             Dim n As Node, r As RectangleF
             Dim xpos As Single = 0, ypos As Single = 0
-
             If (Me.Owner.CZoom < 1) Then Me.Owner.CZoom = 1
-
             For row As Integer = 0 To Me.Nodes.GetLength(0) - 1
                 For column As Integer = 0 To Me.Nodes.GetLength(1) - 1
                     n = Me.Nodes(row, column)
                     r = New RectangleF(xpos, ypos, n.Rectangle.Width * Me.Owner.CZoom, n.Rectangle.Height * Me.Owner.CZoom)
-                    If (n.Camera.IsEmpty) Then n.Camera = r
                     Me.Owner.Terrain.Draw(g, n, r)
+                    Me.Owner.Terrain.DrawOverlay(g, n, r)
                     xpos += r.Width
                 Next
                 xpos = 0
                 ypos += r.Height
             Next
-
-            xpos = 0
-            ypos = 0
-
-            For row As Integer = 0 To Me.Nodes.GetLength(0) - 1
-                For column As Integer = 0 To Me.Nodes.GetLength(1) - 1
-                    n = Me.Nodes(row, column)
-                    r = New RectangleF(xpos, ypos, n.Rectangle.Width * Me.Owner.CZoom, n.Rectangle.Height * Me.Owner.CZoom)
-                    Me.Owner.Terrain.DrawOverlay(g, Me.Nodes(row, column), r)
-                    xpos += r.Width
-                Next
-                xpos = 0
-                ypos += r.Height
-            Next
-
         End Sub
 
         ''' <summary>

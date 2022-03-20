@@ -1,5 +1,6 @@
 ﻿
 Imports System.ComponentModel
+Imports System.Drawing.Drawing2D
 Imports System.Threading
 
 Public MustInherit Class Engine
@@ -45,9 +46,8 @@ Public MustInherit Class Engine
                     If (Not Me.Updating) Then
                         Using bm As New Bitmap(Me.Viewport.Width, Me.Viewport.Height)
                             Using g As Graphics = Graphics.FromImage(bm)
-
-                                g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
-
+                                g.CompositingQuality = CompositingQuality.HighSpeed
+                                g.SmoothingMode = SmoothingMode.HighSpeed
                                 Me.Draw(g)
                                 Me.Buffer = CType(bm.Clone, Bitmap)
                                 Me.Update(CType(bm.Clone, Bitmap))

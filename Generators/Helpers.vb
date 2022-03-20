@@ -1,46 +1,34 @@
-﻿Imports Gridmaster.World
+﻿Imports System.Runtime.InteropServices
+Imports Gridmaster.World
 
 Namespace Generators
     Public Class Helpers
-        Public Shared Sub CalculateResource(n As Node, Optional reset As Boolean = True)
 
-            If (reset AndAlso n.Resource.Any) Then n.Resource.Clear()
-            If (n.Type = TerrainType.Water) Then
-                n.Resource.Add(Resources.Water, Double.PositiveInfinity)
-            Else
-                Dim value As Double
-                For Each rt As Resources In [Enum].GetValues(GetType(Resources))
+        ''' <summary>
+        ''' Calculcates the range between min and max using steps, returns integer array.
+        ''' </summary>
+        Public Shared Function Range(min As Single, max As Single, steps As Integer) As Integer()
+            Dim r As Integer() = New Integer(steps - 1) {}
+            Dim s As Single = (max - min) / steps
+            For i As Integer = 0 To steps - 1
+                r(i) = CInt(Math.Round(min + (i * s)))
+            Next
+            Return r.Reverse.ToArray
+        End Function
 
-                    Select Case rt
-                        Case Resources.Rock
-                            value = Math.Round(Randomizer.Float(n.Noise, 255))
-                            If (n.Noise <= 255) Then n.Resource.Add(rt, value)
-                        Case Resources.Iron
-                            value = Math.Round(Randomizer.Float(n.Noise, 200))
-                            If (n.Noise <= 200) Then n.Resource.Add(rt, value)
-                        Case Resources.Copper
-                            value = Math.Round(Randomizer.Float(n.Noise, 160))
-                            If (n.Noise <= 160) Then n.Resource.Add(rt, value)
-                        Case Resources.Coal
-                            value = Math.Round(Randomizer.Float(n.Noise, 96))
-                            If (n.Noise <= 96) Then n.Resource.Add(rt, value)
-                        Case Resources.Gold
-                            value = Math.Round(Randomizer.Float(n.Noise, 64))
-                            If (n.Noise <= 64) Then n.Resource.Add(rt, value)
-                        Case Resources.Diamond
-                            value = Math.Round(Randomizer.Float(n.Noise, 32))
-                            If (n.Noise <= 32) Then n.Resource.Add(rt, value)
-                    End Select
-                Next
+        ''' <summary>
+        ''' Gets color gradfient for a value from low to high.
+        ''' </summary>
+        Public Shared Function GetColor(v As Double, min As Single, max As Single) As Color
+            Dim offset As Integer = 0
+            If (v < min) Then
+                v = min
+            ElseIf (v > max) Then
+                v = max
             End If
-
-        End Sub
-
-
-        Public Shared Sub DrawCardinalGauge(g As Graphics, n As Node, r As RectangleF)
-
-
-        End Sub
+            offset = CInt(255 * (v - min) / max - min)
+            Return Color.FromArgb(255, 255 - offset, offset, 0)
+        End Function
 
     End Class
 End Namespace
