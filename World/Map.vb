@@ -64,7 +64,7 @@ Namespace World
         End Function
 
         ''' <summary>
-        ''' A function that works the same way as collection ForEach.
+        ''' A function that works the same way as ForEach.
         ''' </summary>
         Public Sub Batch(method As Action(Of Node))
             For row As Integer = 0 To Me.NodeRow - 1

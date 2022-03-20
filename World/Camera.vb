@@ -72,13 +72,34 @@ Namespace World
                     n = Me.Nodes(row, column)
                     r = New RectangleF(xpos, ypos, n.Rectangle.Width * Me.Owner.CZoom, n.Rectangle.Height * Me.Owner.CZoom)
                     Me.Owner.Terrain.Draw(g, n, r)
-                    Me.Owner.Terrain.DrawOverlay(g, n, r)
+                    Me.Owner.Terrain.Overlay(g, n, r)
                     xpos += r.Width
                 Next
                 xpos = 0
                 ypos += r.Height
             Next
         End Sub
+
+        ''' <summary>
+        ''' Translates the corrected x, y, width and height to a rectangle viewed by the camera.
+        ''' </summary>
+        Public Function Translate(n As Node, ByRef result As RectangleF) As Boolean
+            Dim cn As Node, r As RectangleF, xpos As Single = 0, ypos As Single = 0
+            For row As Integer = 0 To Me.Nodes.GetLength(0) - 1
+                For column As Integer = 0 To Me.Nodes.GetLength(1) - 1
+                    cn = Me.Nodes(row, column)
+                    r = New RectangleF(xpos, ypos, cn.Rectangle.Width * Me.Owner.CZoom, cn.Rectangle.Height * Me.Owner.CZoom)
+                    If (Me.Nodes(row, column) Is n) Then
+                        result = r
+                        Return True
+                    End If
+                    xpos += r.Width
+                Next
+                xpos = 0
+                ypos += r.Height
+            Next
+            Return False
+        End Function
 
         ''' <summary>
         ''' Creates a node array for the camera with given index.
@@ -124,7 +145,7 @@ Namespace World
         End Function
 
         Public Overrides Function ToString() As String
-            Return String.Format("CAMERA : VP {0}x{1} [{2}] [{3:0.00}]", Me.Width, Me.Height, Me.Count, Me.Owner.CZoom)
+            Return String.Format("CAMERA : {0}x{1} [{2}] [{3:0.00}]", Me.Index.Row, Me.Index.Column, Me.Count, Me.Owner.CZoom)
         End Function
     End Class
 End Namespace

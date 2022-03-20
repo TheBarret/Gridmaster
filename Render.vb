@@ -1,4 +1,6 @@
 ﻿Imports Gridmaster.World
+Imports Gridmaster.Ecosystem
+Imports System.ComponentModel.Design.ObjectSelectorEditor
 
 Public Class Render
     Public Property Session As Session
@@ -20,19 +22,36 @@ Public Class Render
     End Sub
 
     Private Sub Viewport_MouseDown(sender As Object, e As MouseEventArgs) Handles Viewport.MouseDown
-        Dim position As Point = Me.Viewport.PointToClient(Cursor.Position)
         Dim node As Node = Nothing
-        If (Me.Session.Camera.GetNodeAt(position.X, position.Y, node)) Then
-            Me.pGrid.SelectedObject = node
+        Dim position As Point = Me.Viewport.PointToClient(Cursor.Position)
+
+        If (Me.Session.Camera.GetNodeAt(position.X, position.Y, Node)) Then
             Me.Session.Active = node
+            Me.pGrid.SelectedObject = Me.Session.Ecosystem.GetObjectsAt(node).FirstOrDefault
         End If
+
     End Sub
 
     Private Sub PopulateForm()
         For Each r As Resources In [Enum].GetValues(GetType(Resources))
             Me.cResource.Items.Add(r)
         Next
+        Me.cResource.SelectedIndex = 0
     End Sub
+
+    Private Sub cResource_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cResource.SelectedIndexChanged
+        Me.Viewport.Focus()
+        If (Me.cResource.SelectedIndex <> -1) Then
+            If (Me.Session IsNot Nothing) Then
+                Me.Session.Filter(CType(Me.cResource.SelectedIndex, Resources))
+            End If
+        End If
+    End Sub
+
+    Private Sub NewMapToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles NewMapToolStripMenuItem.Click
+        Me.Session.NewMap()
+    End Sub
+
 End Class
 
 

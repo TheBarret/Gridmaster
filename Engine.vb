@@ -2,6 +2,7 @@
 Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
 Imports System.Threading
+Imports Gridmaster.Ecosystem
 
 Public MustInherit Class Engine
     <Browsable(False)> Public Property Running As Boolean
@@ -23,6 +24,7 @@ Public MustInherit Class Engine
         Me.Signal = New ManualResetEvent(False)
     End Sub
     Public Sub [Start]()
+        Me.Initialize()
         Call New Thread(AddressOf Me.Tick) With {.IsBackground = True}.Start()
     End Sub
 
@@ -40,7 +42,7 @@ Public MustInherit Class Engine
             Me.Signal.Reset()
             Do
 
-                Me.Offset = Environment.TickCount - Me.Elapsed
+                Me.Offset = System.Environment.TickCount - Me.Elapsed
                 If (Me.Offset >= (1000 / Me.Rate)) Then
                     Me.Stamp = DateTime.Now
                     If (Not Me.Updating) Then
@@ -48,15 +50,16 @@ Public MustInherit Class Engine
                             Using g As Graphics = Graphics.FromImage(bm)
                                 g.CompositingQuality = CompositingQuality.HighSpeed
                                 g.SmoothingMode = SmoothingMode.HighSpeed
+                                Me.Update()
                                 Me.Draw(g)
                                 Me.Buffer = CType(bm.Clone, Bitmap)
-                                Me.Update(CType(bm.Clone, Bitmap))
+                                Me.UpdateFrame(CType(bm.Clone, Bitmap))
                             End Using
                         End Using
                     Else
-                        Me.Update(Me.Buffer)
+                        Me.UpdateFrame(Me.Buffer)
                     End If
-                    Me.Elapsed = Environment.TickCount
+                    Me.Elapsed = System.Environment.TickCount
                     Me.Timing = DateTime.Now.Subtract(Me.Stamp)
                 End If
             Loop While Me.Running
@@ -81,16 +84,18 @@ Public MustInherit Class Engine
         Me.Updating = False
     End Sub
 
-    Private Sub Update(bm As Bitmap)
+    Private Sub UpdateFrame(bm As Bitmap)
         If (Me.Viewport.InvokeRequired) Then
-            Me.Viewport.Invoke(Sub() Me.Update(bm))
+            Me.Viewport.Invoke(Sub() Me.UpdateFrame(bm))
         Else
             Me.Viewport.BackgroundImage = CType(bm.Clone, Bitmap)
             Me.Viewport.Refresh()
         End If
     End Sub
 
+    Public MustOverride Sub Initialize()
     Public MustOverride Sub Draw(g As Graphics)
+    Public MustOverride Sub Update()
 
     Public Overrides Function ToString() As String
         If (Me.Running) Then

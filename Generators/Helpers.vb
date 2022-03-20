@@ -21,13 +21,10 @@ Namespace Generators
         ''' </summary>
         Public Shared Function GetColor(v As Double, min As Single, max As Single) As Color
             Dim offset As Integer = 0
-            If (v < min) Then
-                v = min
-            ElseIf (v > max) Then
-                v = max
-            End If
+            If (v < min) Then v = min
+            If (v > max) Then v = max
             offset = CInt(255 * (v - min) / max - min)
-            Return Color.FromArgb(255, 255 - offset, offset, 0)
+            Return Color.FromArgb(255 - offset, 255 - offset, offset, 0)
         End Function
 
     End Class

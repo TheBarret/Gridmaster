@@ -8,5 +8,6 @@
         Coal
         Gold
         Diamond
+        Fish
     End Enum
 End Namespace

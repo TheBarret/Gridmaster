@@ -3,7 +3,6 @@
 Namespace Generators
     ''' <summary>
     ''' Generates random noise data for the terrain.
-    ''' https://stackoverflow.com/questions/45120396/why-does-switching-from-mersenne-twister-to-other-prngs-in-gradient-noise-genera
     ''' </summary>
     Public Class TerrainGenerator
 
@@ -11,7 +10,8 @@ Namespace Generators
             value = (value Xor 61) Xor (value >> 16)
             value += value << 3
             value = value Xor (value >> 4)
-            value *= &H27D4EB2D
+            'value *= &H27D4EB2D
+            value *= 7346283267
             value = value Xor (value >> 15)
             Return value
         End Function
