@@ -8,12 +8,13 @@ Namespace Environment
         Public Property Updating As Boolean
         Public Property Collection As List(Of Species)
         Public WithEvents Clock As Timers.Timer
+        Private LastUpdate As DateTime
         Sub New(owner As Session)
             Me.Owner = owner
             Me.Updating = False
             Me.Collection = New List(Of Species)
-
-            Me.Clock = New Timers.Timer(2000)
+            Me.LastUpdate = DateTime.Now
+            Me.Clock = New Timers.Timer(5000)
             Me.Clock.Enabled = True
             Me.Clock.Start()
         End Sub
@@ -37,6 +38,7 @@ Namespace Environment
 
         Public Sub Update()
             If (Not Me.Updating) Then
+                Me.LastUpdate = DateTime.Now
                 SyncLock Me.Collection
                     Me.Collection.ForEach(Sub(s) s.Update())
                 End SyncLock
@@ -55,7 +57,7 @@ Namespace Environment
         End Function
 
         Public Overrides Function ToString() As String
-            Return String.Format("ECOSYS : {0}", Me.Collection.Count)
+            Return String.Format("ECOSYS : {0} CLOCK {1}", Me.Collection.Count, (DateTime.Now - Me.LastUpdate).Duration)
         End Function
     End Class
 

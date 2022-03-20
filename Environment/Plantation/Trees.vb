@@ -39,25 +39,26 @@ Namespace Environment.Plantation
             Try
                 Dim neighbors As List(Of Node)
                 Dim buffer As New List(Of Tree)
-                    Dim sum As Integer
-                    Dim exists As Boolean
-                    Dim t As Tree = Nothing
+                Dim sum As Integer
+                Dim exists As Boolean
+                Dim t As Tree = Nothing
 
-                    For Each n As Node In Me.Owner.Map.Nodes
+                For Each n As Node In Me.Owner.Map.Nodes
 
-                        neighbors = Me.GetNeighbors(n)
-                        sum = neighbors.Where(Function(x) Me.Contains(x)).Count
-                        exists = Me.GetTree(n, t)
+                    neighbors = Me.GetNeighbors(n)
+                    sum = neighbors.Where(Function(x) Me.Contains(x)).Count
+                    exists = Me.GetTree(n, t)
 
-                        If (sum = 3 AndAlso n.Type = TerrainType.Grass Or n.Type = TerrainType.Dirt) Then
-                            buffer.Add(If(exists, t, New Tree(n)))
-                            Continue For
-                        End If
-                        If (exists AndAlso (sum = 2 Or sum = 3)) Then
-                            buffer.Add(If(exists, t, New Tree(n)))
-                            Continue For
-                        End If
-                    Next
+                    If (sum = 3 AndAlso n.Type = TerrainType.Grass Or n.Type = TerrainType.Dirt) Then
+                        buffer.Add(If(exists, t, New Tree(n)))
+                        Continue For
+                    End If
+                    If (exists AndAlso (sum = 2 Or sum = 3)) Then
+                        buffer.Add(t)
+                        Continue For
+                    End If
+                Next
+
                 SyncLock Me.Collection
                     Me.Collection.Clear()
                     Me.Collection.AddRange(buffer)
@@ -74,10 +75,10 @@ Namespace Environment.Plantation
                     If (Me.Owner.Camera.Translate(n.Node, rect)) Then
                         rect = Tree.Center(rect, n.Age)
                         If (n.Age = n.Max) Then
-                            g.FillEllipse(Brushes.DarkOliveGreen, rect.X, rect.Y, n.Age, n.Age)
+                            g.FillEllipse(Brushes.DarkGreen, rect.X, rect.Y, n.Age, n.Age)
                             g.DrawEllipse(Pens.Black, rect.X, rect.Y, n.Age, n.Age)
                         Else
-                            g.FillEllipse(Brushes.Green, rect.X, rect.Y, n.Age, n.Age)
+                            g.FillEllipse(Brushes.ForestGreen, rect.X, rect.Y, n.Age, n.Age)
                             g.DrawEllipse(Pens.Black, rect.X, rect.Y, n.Age, n.Age)
                         End If
                     End If

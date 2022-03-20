@@ -1,6 +1,4 @@
 ﻿Imports Gridmaster.World
-Imports Gridmaster.Ecosystem
-Imports System.ComponentModel.Design.ObjectSelectorEditor
 
 Public Class Render
     Public Property Session As Session

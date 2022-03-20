@@ -3,7 +3,6 @@
 Namespace World
     Public Class Map
         Inherits NodeArray
-
         Public Property Owner As Session
         Public Property Width As Integer
         Public Property Height As Integer
@@ -131,7 +130,7 @@ Namespace World
         End Property
 
         Public Overrides Function ToString() As String
-            Return String.Format("MAP    : VP {0}x{1} [{2}x{2}] [{3}]", Me.Width, Me.Height, Me.Owner.Size, Me.Total)
+            Return String.Format("MAP    : {0}x{1} [{2}x{2}] [{3}]", Me.Width, Me.Height, Me.Owner.Size, Me.Total)
         End Function
     End Class
 End Namespace

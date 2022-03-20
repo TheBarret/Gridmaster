@@ -16,7 +16,7 @@ Public MustInherit Class Engine
     Private Timing As TimeSpan
     Private Signal As ManualResetEvent
     Sub New(ctl As Control)
-        Me.Rate = 40
+        Me.Rate = 60
         Me.Offset = 0
         Me.Viewport = ctl
         Me.Running = False

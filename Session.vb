@@ -64,7 +64,10 @@ Public Class Session
         g.Clear(Color.Black)
         Me.Camera.Draw(g)
         Me.Ecosystem.Draw(g)
-        g.DrawString(Me.Camera.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 1)
+        g.DrawString(Me.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 1)
+        g.DrawString(Me.Camera.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 12)
+        g.DrawString(Me.Map.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 24)
+        g.DrawString(Me.Ecosystem.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 36)
     End Sub
 
     ''' <summary>
