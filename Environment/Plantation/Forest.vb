@@ -98,16 +98,14 @@ Namespace Environment.Plantation
         ''' Draws the forest.
         ''' </summary>
         Public Overrides Sub Draw(g As Graphics)
-            SyncLock Me.Collection
-                Dim r As RectangleF = Nothing, t As Tree = Nothing
-                For Each n In Me.Collection
-                    If (Me.Owner.Camera.Translate(n.Node, r)) Then
-                        t = n.Cast(Of Tree)
-                        r = Helpers.Center(r, t.Size)
-                        g.DrawImage(t.Texture, r.X, r.Y, r.Width, r.Height)
-                    End If
-                Next
-            End SyncLock
+            Dim r As RectangleF = Nothing, t As Tree = Nothing
+            For Each n In Me.Collection
+                If (Me.Owner.Camera.Translate(n.Node, r)) Then
+                    t = n.Cast(Of Tree)
+                    r = Helpers.Center(r, t.Size)
+                    g.DrawImage(t.Texture, r.X, r.Y, r.Width, r.Height)
+                End If
+            Next
         End Sub
 
         ''' <summary>
