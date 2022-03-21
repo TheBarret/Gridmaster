@@ -81,7 +81,7 @@ Namespace World
         End Sub
 
         ''' <summary>
-        ''' Translates the corrected x, y, width and height to a rectangle viewed by the camera.
+        ''' Translates the corrected x, y, width and height to a rectangleF as viewed by the camera.
         ''' </summary>
         Public Function Translate(n As Node, ByRef result As RectangleF) As Boolean
             Dim cn As Node, r As RectangleF, xpos As Single = 0, ypos As Single = 0

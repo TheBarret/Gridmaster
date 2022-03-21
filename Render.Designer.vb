@@ -137,7 +137,7 @@ Partial Class Render
         Me.MinimizeBox = False
         Me.Name = "Render"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
-        Me.Text = "Grid"
+        Me.Text = "Ecosystem Simulator"
         Me.TabControl1.ResumeLayout(False)
         Me.pageRender.ResumeLayout(False)
         Me.pageRender.PerformLayout()

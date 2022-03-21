@@ -7,8 +7,17 @@ Public Class Render
         Me.PopulateForm()
 
         Me.Session = New Session(Me.Viewport)
+        AddHandler Me.Session.SelectionChanged, AddressOf Me.Session_SelectionChanged
         Me.Session.Start()
 
+    End Sub
+
+    Private Sub Session_SelectionChanged(n As Node)
+        If (Me.pGrid.InvokeRequired) Then
+            Me.pGrid.Invoke(Sub() Me.Session_SelectionChanged(n))
+        Else
+            Me.pGrid.SelectedObject = n
+        End If
     End Sub
 
     Private Sub Render_KeyDown(sender As Object, e As KeyEventArgs) Handles Me.KeyDown
@@ -25,7 +34,7 @@ Public Class Render
 
         If (Me.Session.Camera.GetNodeAt(position.X, position.Y, Node)) Then
             Me.Session.Active = node
-            Me.pGrid.SelectedObject = Me.Session.Ecosystem.GetObjectsAt(node).FirstOrDefault
+            Me.pGrid.SelectedObject = node
         End If
 
     End Sub

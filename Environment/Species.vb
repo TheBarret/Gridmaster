@@ -1,4 +1,5 @@
-﻿Imports Gridmaster.World
+﻿Imports System.Runtime.CompilerServices
+Imports Gridmaster.World
 
 Namespace Environment
     Public MustInherit Class Species
@@ -20,7 +21,6 @@ Namespace Environment
         Public MustOverride Sub Update()
         Public MustOverride Sub Reset()
         Public MustOverride Sub Draw(g As Graphics)
-        Public MustOverride Function GetObject(n As Node, ByRef result As Object) As Boolean
         Public MustOverride ReadOnly Property Name As String
         Public MustOverride ReadOnly Property Species As Type
     End Class

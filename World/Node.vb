@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports Gridmaster.Environment
 Imports Gridmaster.Generators
 
 Namespace World
@@ -76,6 +77,15 @@ Namespace World
         Public Function SurroundedBy(type As TerrainType) As Boolean
             Return Me.Neighbors.Select(Function(y) y.Value.Type).All(Function(x) x = type)
         End Function
+
+        ''' <summary>
+        ''' Expose the species property if any to the grid editor.
+        ''' </summary>
+        Public ReadOnly Property GetObject As GameObject
+            Get
+
+            End Get
+        End Property
 
         ''' <summary>
         ''' Returns true if the given direction is present in this node's neighbor list.

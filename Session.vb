@@ -2,6 +2,7 @@
 Imports Gridmaster.Environment.Plantation
 Imports Gridmaster.World
 Imports System.ComponentModel
+Imports System.Drawing.Drawing2D
 
 Public Class Session
     Inherits Engine
@@ -15,6 +16,8 @@ Public Class Session
     <Browsable(False)> Public Property Active As Node
     <Browsable(False)> Public Property Ecosystem As Ecosystem
     <Browsable(False)> Public Property Font As Dictionary(Of Fonts, Font)
+
+    Public Event SelectionChanged(n As Node)
 
     Sub New(ctl As Control)
         MyBase.New(ctl)
@@ -36,11 +39,18 @@ Public Class Session
 
     End Sub
 
+    ''' <summary>
+    ''' Initializes session.
+    ''' </summary>
     Public Overrides Sub Initialize()
 
-        ' Add trees to the map
-        Me.Ecosystem.Collection.Add(New Trees(Me))
+        'Spawn forest
+        Me.Ecosystem.Add("forest", New Forest(Me))
 
+        'Select the first node
+        If (Me.Map.Nodes.Length > 0) Then
+            Me.RaiseSelection(Me.Map.Nodes(0, 0))
+        End If
     End Sub
 
     Public Sub NewMap()
@@ -64,10 +74,10 @@ Public Class Session
         g.Clear(Color.Black)
         Me.Camera.Draw(g)
         Me.Ecosystem.Draw(g)
-        g.DrawString(Me.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 1)
-        g.DrawString(Me.Camera.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 12)
-        g.DrawString(Me.Map.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 24)
-        g.DrawString(Me.Ecosystem.ToString, Me.Font(Fonts.Small), Brushes.Black, 0, 36)
+        g.DrawString(Me.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 1)
+        g.DrawString(Me.Camera.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 12)
+        g.DrawString(Me.Map.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 24)
+        g.DrawString(Me.Ecosystem.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 36)
     End Sub
 
     ''' <summary>
@@ -84,5 +94,11 @@ Public Class Session
         Me.Terrain.Filter = r
     End Sub
 
+    ''' <summary>
+    ''' Calls the SelectionChanged event.
+    ''' </summary>
+    Public Sub RaiseSelection(n As Node)
+        RaiseEvent SelectionChanged(n)
+    End Sub
 
 End Class

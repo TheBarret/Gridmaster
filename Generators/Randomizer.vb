@@ -22,9 +22,14 @@ Namespace Generators
             Return CLng(r.Next(min, max))
         End Function
 
-        Public Shared Function Float(min As Single, max As Single) As Double
+        Public Shared Function FloatL(min As Single, max As Single) As Double
             Dim r As New Random(Randomizer.Seed)
             Return (r.NextDouble * (max - min) + min)
+        End Function
+
+        Public Shared Function FloatS(min As Single, max As Single) As Single
+            Dim r As New Random(Randomizer.Seed)
+            Return CSng(r.NextDouble * (max - min) + min)
         End Function
 
         Public Shared Function Seed() As Integer
