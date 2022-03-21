@@ -21,7 +21,7 @@ Namespace Environment
             Me.Owner = owner
             Me.lock = New Object
 
-            Me.Clock = New Timers.Timer(700)
+            Me.Clock = New Timers.Timer(1000)
             Me.Year = 1800
             Me.Month = 3
             Me.Day = 1
@@ -29,7 +29,7 @@ Namespace Environment
 
             Me.Clock.Enabled = True
             Me.Clock.Start()
-            Me.Cycle()
+            Me.CycleAll()
         End Sub
 
         Private Sub Clock_Elapsed(sender As Object, e As ElapsedEventArgs) Handles Clock.Elapsed
@@ -40,11 +40,11 @@ Namespace Environment
         ''' Resets everything.
         ''' </summary>
         Public Sub Reset()
+            Me.Year = 1800
+            Me.Month = 3
+            Me.Day = 1
+            Me.Season = Me.GetSeason
             SyncLock Me.lock
-                Me.Year = 1800
-                Me.Month = 3
-                Me.Day = 1
-                Me.Season = Me.GetSeason
                 For Each sp In Me
                     sp.Value.Reset()
                     sp.Value.Initialize()
@@ -75,9 +75,8 @@ Namespace Environment
                 End If
                 Me.Season = Me.GetSeason
             End If
-            '// Cycle each week
             If (Me.Day Mod 7 = 0) Then
-                Me.Cycle()
+                Me.CycleAll()
             End If
         End Sub
 
@@ -109,13 +108,27 @@ Namespace Environment
         ''' <summary>
         ''' Cycles all objects in the ecosystem.
         ''' </summary>
-        Public Sub Cycle()
+        Public Sub CycleAll()
             SyncLock Me.lock
                 For Each s In Me
                     s.Value.Update()
                 Next
             End SyncLock
         End Sub
+
+        ''' <summary>
+        ''' Finds all species on this node, returns true if any.
+        ''' </summary>
+        Public Function GetObjectsAt(n As Node, ByRef result As List(Of GameObject)) As Boolean
+            Dim buffer As New List(Of GameObject), r As GameObject = Nothing
+            For Each pair In Me
+                If (pair.Value.GetObject(n, r)) Then
+                    buffer.Add(r)
+                End If
+            Next
+            result = buffer
+            Return buffer.Any
+        End Function
 
         Public Overrides Function ToString() As String
             Return String.Format("ECOSYS : [{0}] {1}-{2}-{3} [{4}]", Me.Count, Me.Day, Me.GetMonth, Me.Year, Me.Season)

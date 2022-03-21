@@ -1,18 +1,26 @@
-﻿Imports System.Data.Common
+﻿Imports Gridmaster.World
 Imports Gridmaster.Generators
-Imports Gridmaster.World
+Imports System.IO
+
 
 Namespace Environment.Plantation
     Public Class Forest
         Inherits Species
+        Public Const MAXTREES As Integer = 300
+        Public Property Textures As List(Of Image)
         Public Property Collection As List(Of GameObject)
+
 
         Sub New(owner As Session)
             MyBase.New(owner, False)
             Me.Collection = New List(Of GameObject)
+            Me.Textures = New List(Of Image)
             Me.Initialize()
         End Sub
 
+        ''' <summary>
+        ''' Deletes the forest
+        ''' </summary>
         Public Overrides Sub Reset()
             SyncLock Me.Collection
                 Me.Collection.Clear()
@@ -23,17 +31,28 @@ Namespace Environment.Plantation
         ''' Initializes the forest.
         ''' </summary>
         Public Overrides Sub Initialize()
+            For Each dir As String In Directory.GetFiles(".\assets\")
+                If (dir.ToLower.EndsWith(".png")) Then
+                    Me.Textures.Add(Image.FromFile(dir))
+                End If
+            Next
             SyncLock Me.Collection
                 Dim n As Node = Nothing
-                For row As Integer = 0 To Me.Owner.Map.Nodes.GetLength(0) - 1
-                    For column As Integer = 0 To Me.Owner.Map.Nodes.GetLength(1) - 1
+                For row As Integer = Me.Owner.Map.Nodes.GetLength(0) - 1 To 0 Step -1
+                    For column As Integer = Me.Owner.Map.Nodes.GetLength(1) - 1 To 0 Step -1
                         n = Me.Owner.Map.Nodes(row, column)
-                        If (n.Type = TerrainType.Grass Or n.Type = TerrainType.Dirt) Then
-                            If (Randomizer.Number(0, 100) <= 40) Then
-                                Me.Collection.Add(New Tree(n))
-                            End If
-                        End If
+                        Select Case n.Type
+                            Case TerrainType.Dirt
+                                If (Randomizer.Number(0, 100) <= 10) Then
+                                    Me.Collection.Add(New Tree(n, Me.GetTexture))
+                                End If
+                            Case TerrainType.Grass
+                                If (Randomizer.Number(0, 100) <= 10) Then
+                                    Me.Collection.Add(New Tree(n, Me.GetTexture))
+                                End If
+                        End Select
                     Next
+                    If (Me.Collection.Count > Forest.MAXTREES) Then Exit For
                 Next
             End SyncLock
         End Sub
@@ -42,36 +61,37 @@ Namespace Environment.Plantation
         ''' Updates the rule set.
         ''' </summary>
         Public Overrides Sub Update()
-            Try
-                Dim buffer As List(Of Node)
-                Dim result As New List(Of GameObject)
-                Dim sum As Integer, tree As GameObject = Nothing
+            Dim buffer As List(Of Node)
+            Dim result As New List(Of GameObject)
+            Dim sum As Integer, current As GameObject = Nothing
 
-                For Each n As Node In Me.Owner.Map.Nodes
+            For i As Integer = 0 To Me.Owner.Map.Nodes.GetLength(0) - 1
+                For j As Integer = 0 To Me.Owner.Map.Nodes.GetLength(1) - 1
+                    Dim n As Node = Me.Owner.Map.Nodes(i, j)
 
                     buffer = Me.GetNeighbors(n)
                     sum = buffer.Where(Function(x) Me.Contains(x)).Count
 
-                    If (Me.GetTree(n, tree)) Then
-                        If (sum >= 3) Then
-                            result.Add(tree)
+                    If (Me.GetTree(n, current)) Then
+                        If (sum >= 2 And sum <= 7) Then
+                            result.Add(current)
                         End If
                     Else
-                        If (sum = 4 Or sum = 6) Then
-                            If (Me.ValidNode(n)) Then
-                                result.Add(New Tree(n))
+                        If (Tree.IsGrowableAt(n)) Then
+                            If (sum = 3 Or sum = 4) Then
+                                If (result.Count < Forest.MAXTREES) Then
+                                    result.Add(New Tree(n, Me.GetTexture))
+                                End If
                             End If
                         End If
                     End If
                 Next
+            Next
 
-                SyncLock Me.Collection
-                    Me.Collection.Clear()
-                    Me.Collection.AddRange(result)
-                End SyncLock
-            Finally
-                Me.Cycle()
-            End Try
+            SyncLock Me.Collection
+                Me.Collection.Clear()
+                Me.Collection.AddRange(result)
+            End SyncLock
         End Sub
 
         ''' <summary>
@@ -83,22 +103,20 @@ Namespace Environment.Plantation
                 For Each n In Me.Collection
                     If (Me.Owner.Camera.Translate(n.Node, r)) Then
                         t = n.Cast(Of Tree)
-                        r = Tree.Center(r, t.Age)
-                        g.FillEllipse(New SolidBrush(t.ColorByAge), r.X, r.Y, t.Age, t.Age)
-                        g.DrawEllipse(Pens.Black, r.X, r.Y, t.Age, t.Age)
+                        r = Helpers.Center(r, t.Size)
+                        g.DrawImage(t.Texture, r.X, r.Y, r.Width, r.Height)
                     End If
                 Next
             End SyncLock
         End Sub
 
         ''' <summary>
-        ''' Call the cycle method for each tree
+        ''' Returns a random tree or bush asset.
         ''' </summary>
-        Public Sub Cycle()
-            SyncLock Me.Collection
-                Me.Collection.ForEach(Sub(x) x.Cast(Of Tree).Cycle())
-            End SyncLock
-        End Sub
+        ''' <returns></returns>
+        Public Function GetTexture() As Image
+            Return Me.Textures(Randomizer.Number(0, Me.Textures.Count - 1))
+        End Function
 
         ''' <summary>
         ''' Returns true if any of the trees have the same node as the given node.
@@ -106,6 +124,15 @@ Namespace Environment.Plantation
         Public ReadOnly Property Contains(n As Node) As Boolean
             Get
                 Return Me.Collection.Where(Function(x) x.Node Is n).Any
+            End Get
+        End Property
+
+        ''' <summary>
+        ''' Returns true if any of the trees have the same node as the given node.
+        ''' </summary>
+        Public ReadOnly Property Contains(collection As List(Of GameObject), n As Node) As Boolean
+            Get
+                Return collection.Where(Function(x) x.Node Is n).Any
             End Get
         End Property
 
@@ -120,8 +147,17 @@ Namespace Environment.Plantation
             Return False
         End Function
 
-        Public Function ValidNode(n As Node) As Boolean
-            Return n.Noise >= TerrainType.Grass AndAlso n.Noise <= TerrainType.Dirt
+        ''' <summary>
+        ''' GetObjects override.
+        ''' </summary>
+        Public Overrides Function GetObject(n As Node, ByRef result As GameObject) As Boolean
+            For Each pair In Me.Collection
+                If (pair.Node Is n) Then
+                    result = pair
+                    Return True
+                End If
+            Next
+            Return False
         End Function
 
         ''' <summary>
@@ -141,5 +177,7 @@ Namespace Environment.Plantation
                 Return GetType(Forest)
             End Get
         End Property
+
+
     End Class
 End Namespace

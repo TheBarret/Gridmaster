@@ -71,6 +71,7 @@ Public Class Session
     ''' Draw updates the session.
     ''' </summary>
     Public Overrides Sub Draw(g As Graphics)
+        g.SmoothingMode = SmoothingMode.HighSpeed
         g.Clear(Color.Black)
         Me.Camera.Draw(g)
         Me.Ecosystem.Draw(g)

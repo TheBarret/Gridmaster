@@ -81,9 +81,14 @@ Namespace World
         ''' <summary>
         ''' Expose the species property if any to the grid editor.
         ''' </summary>
-        Public ReadOnly Property GetObject As GameObject
+        <Category("Game Objects")>
+        Public ReadOnly Property Selected As GameObject
             Get
-
+                Dim buffer As List(Of GameObject) = Nothing
+                If (Me.Owner.Ecosystem.GetObjectsAt(Me, buffer)) Then
+                    Return buffer.First
+                End If
+                Return Nothing
             End Get
         End Property
 

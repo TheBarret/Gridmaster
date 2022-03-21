@@ -21,6 +21,7 @@ Namespace Environment
         Public MustOverride Sub Update()
         Public MustOverride Sub Reset()
         Public MustOverride Sub Draw(g As Graphics)
+        Public MustOverride Function GetObject(n As Node, ByRef result As GameObject) As Boolean
         Public MustOverride ReadOnly Property Name As String
         Public MustOverride ReadOnly Property Species As Type
     End Class
