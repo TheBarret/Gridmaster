@@ -1,8 +1,8 @@
 ﻿Imports Gridmaster.Environment
-Imports Gridmaster.Environment.Plantation
 Imports Gridmaster.World
 Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
+Imports System.Threading
 
 Public Class Session
     Inherits Engine
@@ -14,28 +14,30 @@ Public Class Session
     <Browsable(False)> Public Property Terrain As Terrain
     <Browsable(False)> Public Property Scale As Single
     <Browsable(False)> Public Property Active As Node
-    <Browsable(False)> Public Property Ecosystem As Ecosystem
+    <Browsable(False)> Public Property Time As Timeline
     <Browsable(False)> Public Property Font As Dictionary(Of Fonts, Font)
 
     Public Event SelectionChanged(n As Node)
 
     Sub New(ctl As Control)
         MyBase.New(ctl)
+
         Me.Updating = False
 
         Me.Size = 8             '// Determines the node size of the map
         Me.CSize = 15           '// Determines the size of the camera
         Me.CZoom = 4.3F        '// Determines the zoom of the camera
-        Me.Scale = 0.02F         '// Determines the scale of the noise generator
+        Me.Scale = 0.04F         '// Determines the scale of the noise generator
 
         Me.Map = New Map(Me)
         Me.Terrain = New Terrain(Me)
         Me.Camera = New Camera(Me)
-        Me.Ecosystem = New Ecosystem(Me)
+        Me.Time = New Timeline(Me)
 
         Me.Font = New Dictionary(Of Fonts, Font)
         Me.Font.Add(Fonts.Small, New Font("Lucida Console", 8, FontStyle.Regular))
         Me.Font.Add(Fonts.Large, New Font("Consolas", 12, FontStyle.Regular))
+
 
     End Sub
 
@@ -43,20 +45,18 @@ Public Class Session
     ''' Initializes session.
     ''' </summary>
     Public Overrides Sub Initialize()
-
-        'Spawn forest
-        Me.Ecosystem.Add("forest", New Forest(Me))
-
-        'Select the first node
         If (Me.Map.Nodes.Length > 0) Then
             Me.RaiseSelection(Me.Map.Nodes(0, 0))
         End If
     End Sub
 
+    ''' <summary>
+    ''' Generate a new map
+    ''' </summary>
     Public Sub NewMap()
         Me.BeginUpdate()
         Me.Terrain.Reset()
-        Me.Ecosystem.Reset()
+        Me.Time.Reset()
         Me.EndUpdate()
     End Sub
 
@@ -74,11 +74,10 @@ Public Class Session
         g.SmoothingMode = SmoothingMode.HighSpeed
         g.Clear(Color.Black)
         Me.Camera.Draw(g)
-        Me.Ecosystem.Draw(g)
         g.DrawString(Me.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 1)
         g.DrawString(Me.Camera.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 12)
         g.DrawString(Me.Map.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 24)
-        g.DrawString(Me.Ecosystem.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 36)
+        g.DrawString(Me.Time.ToString, Me.Font(Fonts.Small), Brushes.White, 0, 36)
     End Sub
 
     ''' <summary>

@@ -1,4 +1,5 @@
-﻿Imports Gridmaster.Generators
+﻿Imports System.Threading
+Imports Gridmaster.Generators
 
 Namespace World
     Public Class Camera
@@ -23,7 +24,6 @@ Namespace World
                 Dim result As Boolean = False
                 Dim cr As Integer = Me.Index.Row
                 Dim cc As Integer = Me.Index.Column
-
                 Select Case dir
                     Case Direction.North
                         result = Me.Owner.Map.GetNode(cr, cc - 1, Me.Index)
@@ -73,6 +73,7 @@ Namespace World
                     r = New RectangleF(xpos, ypos, n.Rectangle.Width * Me.Owner.CZoom, n.Rectangle.Height * Me.Owner.CZoom)
                     Me.Owner.Terrain.Draw(g, n, r)
                     Me.Owner.Terrain.Overlay(g, n, r)
+                    n.DrawBorders(g)
                     xpos += r.Width
                 Next
                 xpos = 0

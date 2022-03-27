@@ -41,8 +41,7 @@ Namespace World
                         Case Else
                             nodes(i, j).Type = TerrainType.Rock
                     End Select
-                    nodes(i, j).Noise = Me.Data(i, j)
-                    nodes(i, j).Initialize()
+                    nodes(i, j).Initialize(Me.Data(i, j))
                 Next
             Next
             If (disposeNoise) Then Me.Data = Nothing
@@ -80,10 +79,9 @@ Namespace World
                             g.FillRectangle(b, r)
                         End Using
                     Case TerrainType.Road
-
+                        Throw New NotImplementedException
                     Case TerrainType.Foundation
-
-
+                        Throw New NotImplementedException
                 End Select
             Else
                 Me.Draw(g, n, r, Me.Filter)

@@ -1,4 +1,6 @@
-﻿Namespace World
+﻿Imports System.Data.Common
+
+Namespace World
     Public Class NodeArray
         Public Property Nodes As Node(,)
 
