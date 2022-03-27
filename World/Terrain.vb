@@ -4,9 +4,11 @@ Imports System.Drawing.Drawing2D
 
 Namespace World
     Public Class Terrain
+
         Public Property Owner As Session
         Public Property Data As Single(,)
         Public Property Filter As Resources
+
         Sub New(owner As Session)
             Me.Owner = owner
             Me.Filter = Resources.Unset
@@ -52,40 +54,15 @@ Namespace World
         ''' Draws the node with corresponding terrain data.
         ''' </summary>
         Public Sub Draw(g As Graphics, n As Node, r As RectangleF)
-            If (Me.Filter = Resources.Unset) Then
-                Select Case n.Type
-                    Case TerrainType.Water
-                        Using b As New HatchBrush(HatchStyle.ZigZag, Color.DarkBlue, Color.SteelBlue)
-                            g.FillRectangle(b, r)
-                        End Using
-                    Case TerrainType.Sand
-                        Using b As New HatchBrush(HatchStyle.SmallConfetti, Color.DarkGoldenrod, Color.Khaki)
-                            g.FillRectangle(b, r)
-                        End Using
-                    Case TerrainType.Grass
-                        Using b As New HatchBrush(HatchStyle.SmallConfetti, Color.DarkOliveGreen, Color.DarkGreen)
-                            g.FillRectangle(b, r)
-                        End Using
-                    Case TerrainType.Dirt
-                        Using b As New HatchBrush(HatchStyle.SmallConfetti, Color.Peru, Color.SaddleBrown)
-                            g.FillRectangle(b, r)
-                        End Using
-                    Case TerrainType.Gravel
-                        Using b As New HatchBrush(HatchStyle.SmallConfetti, Color.Gray, Color.DimGray)
-                            g.FillRectangle(b, r)
-                        End Using
-                    Case TerrainType.Rock
-                        Using b As New HatchBrush(HatchStyle.SmallConfetti, Color.Black, Color.Gray)
-                            g.FillRectangle(b, r)
-                        End Using
-                    Case TerrainType.Road
-                        Throw New NotImplementedException
-                    Case TerrainType.Foundation
-                        Throw New NotImplementedException
-                End Select
-            Else
-                Me.Draw(g, n, r, Me.Filter)
-            End If
+            Try
+                If (Me.Filter = Resources.Unset) Then
+                    g.FillRectangle(n.Filler, r)
+                Else
+                    Me.Draw(g, n, r, Me.Filter)
+                End If
+            Finally
+                n.Walls(g)
+            End Try
         End Sub
 
         ''' <summary>
@@ -131,7 +108,6 @@ Namespace World
             End Select
             Using b As New SolidBrush(c)
                 g.FillRectangle(b, r)
-                g.DrawRectangle(Pens.Black, r.X, r.Y, r.Width, r.Height)
             End Using
         End Sub
 

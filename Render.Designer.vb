@@ -28,7 +28,6 @@ Partial Class Render
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.FileToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.NewMapToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.MapToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.cResource = New System.Windows.Forms.ComboBox()
         Me.pGrid = New System.Windows.Forms.PropertyGrid()
         Me.Viewport = New Gridmaster.Controls.Viewport()
@@ -44,7 +43,7 @@ Partial Class Render
         Me.TabControl1.Location = New System.Drawing.Point(0, 0)
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
-        Me.TabControl1.Size = New System.Drawing.Size(794, 600)
+        Me.TabControl1.Size = New System.Drawing.Size(799, 606)
         Me.TabControl1.TabIndex = 1
         '
         'pageRender
@@ -57,25 +56,25 @@ Partial Class Render
         Me.pageRender.Location = New System.Drawing.Point(4, 24)
         Me.pageRender.Name = "pageRender"
         Me.pageRender.Padding = New System.Windows.Forms.Padding(3)
-        Me.pageRender.Size = New System.Drawing.Size(786, 572)
+        Me.pageRender.Size = New System.Drawing.Size(791, 578)
         Me.pageRender.TabIndex = 0
         Me.pageRender.Text = "Simulation"
         Me.pageRender.UseVisualStyleBackColor = True
         '
         'Status
         '
-        Me.Status.Location = New System.Drawing.Point(3, 547)
+        Me.Status.Location = New System.Drawing.Point(3, 553)
         Me.Status.Name = "Status"
-        Me.Status.Size = New System.Drawing.Size(780, 22)
+        Me.Status.Size = New System.Drawing.Size(785, 22)
         Me.Status.TabIndex = 4
         Me.Status.Text = "StatusStrip1"
         '
         'MenuStrip1
         '
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem, Me.MapToolStripMenuItem})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FileToolStripMenuItem})
         Me.MenuStrip1.Location = New System.Drawing.Point(3, 3)
         Me.MenuStrip1.Name = "MenuStrip1"
-        Me.MenuStrip1.Size = New System.Drawing.Size(780, 24)
+        Me.MenuStrip1.Size = New System.Drawing.Size(785, 24)
         Me.MenuStrip1.TabIndex = 5
         Me.MenuStrip1.Text = "MenuStrip1"
         '
@@ -92,17 +91,11 @@ Partial Class Render
         Me.NewMapToolStripMenuItem.Size = New System.Drawing.Size(125, 22)
         Me.NewMapToolStripMenuItem.Text = "New map"
         '
-        'MapToolStripMenuItem
-        '
-        Me.MapToolStripMenuItem.Name = "MapToolStripMenuItem"
-        Me.MapToolStripMenuItem.Size = New System.Drawing.Size(43, 20)
-        Me.MapToolStripMenuItem.Text = "&Map"
-        '
         'cResource
         '
         Me.cResource.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cResource.FormattingEnabled = True
-        Me.cResource.Location = New System.Drawing.Point(522, 30)
+        Me.cResource.Location = New System.Drawing.Point(527, 30)
         Me.cResource.Name = "cResource"
         Me.cResource.Size = New System.Drawing.Size(258, 23)
         Me.cResource.TabIndex = 3
@@ -110,7 +103,7 @@ Partial Class Render
         'pGrid
         '
         Me.pGrid.HelpVisible = False
-        Me.pGrid.Location = New System.Drawing.Point(522, 59)
+        Me.pGrid.Location = New System.Drawing.Point(527, 59)
         Me.pGrid.Name = "pGrid"
         Me.pGrid.Size = New System.Drawing.Size(258, 485)
         Me.pGrid.TabIndex = 2
@@ -121,14 +114,14 @@ Partial Class Render
         Me.Viewport.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.Viewport.Location = New System.Drawing.Point(6, 32)
         Me.Viewport.Name = "Viewport"
-        Me.Viewport.Size = New System.Drawing.Size(512, 512)
+        Me.Viewport.Size = New System.Drawing.Size(514, 514)
         Me.Viewport.TabIndex = 1
         '
         'Render
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(794, 600)
+        Me.ClientSize = New System.Drawing.Size(799, 606)
         Me.Controls.Add(Me.TabControl1)
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.KeyPreview = True
@@ -155,6 +148,5 @@ Partial Class Render
     Friend WithEvents Status As StatusStrip
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents FileToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents MapToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents NewMapToolStripMenuItem As ToolStripMenuItem
 End Class

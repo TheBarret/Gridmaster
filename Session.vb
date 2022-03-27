@@ -24,10 +24,10 @@ Public Class Session
 
         Me.Updating = False
 
-        Me.Size = 8             '// Determines the node size of the map
-        Me.CSize = 15           '// Determines the size of the camera
-        Me.CZoom = 4.3F        '// Determines the zoom of the camera
-        Me.Scale = 0.04F         '// Determines the scale of the noise generator
+        Me.Size = 16            '// Determines the node size of the map
+        Me.CSize = 16           '// Determines the size of the camera
+        Me.CZoom = 2.0         '// Determines the zoom of the camera
+        Me.Scale = 0.02F        '// Determines the scale of the noise generator
 
         Me.Map = New Map(Me)
         Me.Terrain = New Terrain(Me)

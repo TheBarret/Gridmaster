@@ -1,24 +1,24 @@
 ﻿Imports System.ComponentModel
+Imports System.Drawing.Drawing2D
 Imports Gridmaster.Environment
 Imports Gridmaster.Generators
 
 Namespace World
     Public Class Node
         <Browsable(False)> Public Property Owner As Session
-        <Category("Pathfinding")> <[ReadOnly](True)> Public Property Parent As Node
-        <Category("Pathfinding")> <[ReadOnly](True)> Public Property Cost As Integer
-        <Category("Pathfinding")> <[ReadOnly](True)> Public Property Distance As Integer
+        <Browsable(False)> Public Property Filler As Brush
 
         <Category("Info")> <[ReadOnly](True)> Public Property Index As Integer
         <Category("Info")> <[ReadOnly](True)> Public Property Row As Integer
         <Category("Info")> <[ReadOnly](True)> Public Property Column As Integer
         <Category("Info")> <[ReadOnly](True)> Public Property Rectangle As Rectangle
-        <Category("Info")> <[ReadOnly](True)> Public Property Walls As Dictionary(Of Direction, Boolean)
+        <Category("Info")> <[ReadOnly](True)> Public Property Border As Dictionary(Of Direction, Boolean)
         <Category("Info")> <[ReadOnly](True)> Public Property Neighbors As Dictionary(Of Direction, Node)
 
         <Category("Terrain")> <[ReadOnly](True)> Public Property Noise As Single
         <Category("Terrain")> <[ReadOnly](True)> Public Property Type As TerrainType
         <Category("Terrain")> <[ReadOnly](True)> Public Property Resource As Dictionary(Of Resources, Double)
+
 
         Sub New(owner As Session, index As Integer, row As Integer, column As Integer, rect As Rectangle)
             Me.Owner = owner
@@ -29,14 +29,16 @@ Namespace World
             Me.Type = TerrainType.Undefined
             Me.Neighbors = New Dictionary(Of Direction, Node)
             Me.Resource = New Dictionary(Of Resources, Double)
-            Me.Walls = New Dictionary(Of Direction, Boolean) From {{Direction.North, False}, {Direction.South, False}, {Direction.East, False}, {Direction.West, False}}
+            Me.Border = New Dictionary(Of Direction, Boolean) From {{Direction.North, False}, {Direction.South, False}, {Direction.East, False}, {Direction.West, False}}
         End Sub
 
         ''' <summary>
         ''' Populates the resource data based upon the noise value and terrain type.
         ''' </summary>
         Public Sub Initialize(noise As Single, Optional reset As Boolean = True)
+
             Me.Noise = noise
+
             If (reset) Then Me.Resource.Clear()
             If (Me.Type = TerrainType.Water) Then
                 Me.Resource.Add(Resources.Water, Double.PositiveInfinity)
@@ -49,54 +51,73 @@ Namespace World
                 Me.Resource.Add(Resources.Gold, Me.GetResource(Resources.Gold))
                 Me.Resource.Add(Resources.Diamond, Me.GetResource(Resources.Diamond))
             End If
+
+            Select Case Me.Type
+                Case TerrainType.Water
+                    Me.Filler = New HatchBrush(HatchStyle.ZigZag, Color.DarkBlue, Color.SteelBlue)
+                Case TerrainType.Sand
+                    Me.Filler = New HatchBrush(HatchStyle.SmallConfetti, Color.DarkGoldenrod, Color.Khaki)
+                Case TerrainType.Grass
+                    Me.Filler = New HatchBrush(HatchStyle.SmallConfetti, Color.DarkOliveGreen, Color.DarkGreen)
+                Case TerrainType.Dirt
+                    Me.Filler = New HatchBrush(HatchStyle.SmallConfetti, Color.Peru, Color.SaddleBrown)
+                Case TerrainType.Gravel
+                    Me.Filler = New HatchBrush(HatchStyle.SmallConfetti, Color.Gray, Color.DimGray)
+                Case TerrainType.Rock
+                    Me.Filler = New HatchBrush(HatchStyle.SmallConfetti, Color.Black, Color.Gray)
+                Case TerrainType.Road
+                Case TerrainType.Foundation
+            End Select
         End Sub
 
-        Public Sub DrawBorders(g As Graphics)
-            Dim rect As RectangleF = Nothing
-            For Each wall As KeyValuePair(Of Direction, Boolean) In Me.Walls
+        Public Sub Walls(g As Graphics)
+            If (Me.Border.Any(Function(x) x.Value)) Then
+                Dim rect As RectangleF = Nothing
+                For Each wall As KeyValuePair(Of Direction, Boolean) In Me.Border
 
-                If (wall.Key = Direction.North And wall.Value) Then
-                    If (Me.Neighbors.ContainsKey(Direction.North)) Then
-                        If (Not Me.Neighbors(Direction.North).Walls(Direction.South)) Then
-                            Continue For
+                    If (wall.Key = Direction.North And wall.Value) Then
+                        If (Me.Neighbors.ContainsKey(Direction.North)) Then
+                            If (Not Me.Neighbors(Direction.North).Border(Direction.South)) Then
+                                Continue For
+                            End If
+                        End If
+                        If (Me.Owner.Camera.Translate(Me, rect)) Then
+                            g.DrawLine(Pens.Black, rect.Left, rect.Top, rect.Right, rect.Top)
                         End If
                     End If
-                    If (Me.Owner.Camera.Translate(Me, rect)) Then
-                        g.DrawLine(Pens.Black, rect.Left, rect.Top, rect.Right, rect.Top)
-                    End If
-                End If
 
-                If (wall.Key = Direction.South And wall.Value) Then
-                    If (Me.Neighbors.ContainsKey(Direction.South)) Then
-                        If (Not Me.Neighbors(Direction.South).Walls(Direction.North)) Then
-                            Continue For
+                    If (wall.Key = Direction.South And wall.Value) Then
+                        If (Me.Neighbors.ContainsKey(Direction.South)) Then
+                            If (Not Me.Neighbors(Direction.South).Border(Direction.North)) Then
+                                Continue For
+                            End If
+                        End If
+                        If (Me.Owner.Camera.Translate(Me, rect)) Then
+                            g.DrawLine(Pens.Black, rect.Left, rect.Bottom, rect.Right, rect.Bottom)
                         End If
                     End If
-                    If (Me.Owner.Camera.Translate(Me, rect)) Then
-                        g.DrawLine(Pens.Black, rect.Left, rect.Bottom, rect.Right, rect.Bottom)
-                    End If
-                End If
-                If (wall.Key = Direction.East And wall.Value) Then
-                    If (Me.Neighbors.ContainsKey(Direction.East)) Then
-                        If (Not Me.Neighbors(Direction.East).Walls(Direction.West)) Then
-                            Continue For
+                    If (wall.Key = Direction.East And wall.Value) Then
+                        If (Me.Neighbors.ContainsKey(Direction.East)) Then
+                            If (Not Me.Neighbors(Direction.East).Border(Direction.West)) Then
+                                Continue For
+                            End If
+                        End If
+                        If (Me.Owner.Camera.Translate(Me, rect)) Then
+                            g.DrawLine(Pens.Black, rect.Right, rect.Top, rect.Right, rect.Bottom)
                         End If
                     End If
-                    If (Me.Owner.Camera.Translate(Me, rect)) Then
-                        g.DrawLine(Pens.Black, rect.Right, rect.Top, rect.Right, rect.Bottom)
-                    End If
-                End If
-                If (wall.Key = Direction.West And wall.Value) Then
-                    If (Me.Neighbors.ContainsKey(Direction.West)) Then
-                        If (Not Me.Neighbors(Direction.West).Walls(Direction.East)) Then
-                            Continue For
+                    If (wall.Key = Direction.West And wall.Value) Then
+                        If (Me.Neighbors.ContainsKey(Direction.West)) Then
+                            If (Not Me.Neighbors(Direction.West).Border(Direction.East)) Then
+                                Continue For
+                            End If
+                        End If
+                        If (Me.Owner.Camera.Translate(Me, rect)) Then
+                            g.DrawLine(Pens.Black, rect.Left, rect.Top, rect.Left, rect.Bottom)
                         End If
                     End If
-                    If (Me.Owner.Camera.Translate(Me, rect)) Then
-                        g.DrawLine(Pens.Black, rect.Left, rect.Top, rect.Left, rect.Bottom)
-                    End If
-                End If
-            Next
+                Next
+            End If
         End Sub
 
         ''' <summary>
@@ -161,6 +182,28 @@ Namespace World
                 Return Me.Neighbors.Select(Function(x) x.Value).ToArray
             End Get
         End Property
+
+#Region "Pathfinding"
+        <Category("Pathfinding")> <[ReadOnly](True)> Public Property Parent As Node
+        <Category("Pathfinding")> <[ReadOnly](True)> Public Property Cost As Integer
+        <Category("Pathfinding")> <[ReadOnly](True)> Public Property Distance As Integer
+        ''' <summary>
+        ''' Astar pathfinding algorithm properties.
+        ''' </summary>
+        <Category("Pathfinding")> <[ReadOnly](True)>
+        Public ReadOnly Property CostDistance As Integer
+            Get
+                Return Me.Cost + Me.Distance
+            End Get
+        End Property
+
+        ''' <summary>
+        ''' Astar pathfinding algorithm properties.
+        ''' </summary>
+        Public Sub SetDistance(x As Integer, y As Integer)
+            Me.Distance = Math.Abs(x - Me.Rectangle.X) + Math.Abs(y - Me.Rectangle.Y)
+        End Sub
+#End Region
 
         Public Overrides Function ToString() As String
             Return String.Format("Node {0} [{1},{2}] [{3}]", Me.Index, Me.Row, Me.Column, Me.Type)

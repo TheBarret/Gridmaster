@@ -73,7 +73,6 @@ Namespace World
                     r = New RectangleF(xpos, ypos, n.Rectangle.Width * Me.Owner.CZoom, n.Rectangle.Height * Me.Owner.CZoom)
                     Me.Owner.Terrain.Draw(g, n, r)
                     Me.Owner.Terrain.Overlay(g, n, r)
-                    n.DrawBorders(g)
                     xpos += r.Width
                 Next
                 xpos = 0
@@ -82,7 +81,7 @@ Namespace World
         End Sub
 
         ''' <summary>
-        ''' Translates the corrected x, y, width and height to a rectangleF as viewed by the camera.
+        ''' Returns the node rectangle relative to the camera.
         ''' </summary>
         Public Function Translate(n As Node, ByRef result As RectangleF) As Boolean
             Dim cn As Node, r As RectangleF, xpos As Single = 0, ypos As Single = 0
