@@ -4,9 +4,12 @@ Gridmaster is a simple project to learn how to make the following things:
 - Map         (Containg nodes that respresent a rectangle)
 - Terrain     (using Perlin alg. to create 2d noise data)
 - Camera      (a camera that only shows a specific area to limit loop weight)
-- Ecosystem   (A system that runs seperately from the main engine)
-- Forest      (Forest growth using CA technique)
+- Timesystem  (Keeps tracking, days, months and years as wel for seasons)
+- Plugins     (Able to load in extensions dynamically)
+- Pathfinding (A* pathfinding system)
+- Resources   (Resources distribution and replenishable)
 
-![](https://cdn.discordapp.com/attachments/953055347411656794/955501239708295268/unknown.png)
+![](https://i.imgur.com/dpDXCGk.png)
 
-![](https://cdn.discordapp.com/attachments/621067460061429764/954445807447314482/sim.gif)
+![](https://i.imgur.com/GNql2RK.png)
+
