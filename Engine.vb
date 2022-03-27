@@ -101,6 +101,6 @@ Public MustInherit Class Engine
         If (Me.Running) Then
             Return String.Format("ENGINE : FPS {0}", Math.Abs(Me.Timing.Seconds - Me.Rate))
         End If
-        Return "ENGINE: FPS 0 [ACTUAL 0]"
+        Return String.Empty
     End Function
 End Class

@@ -185,24 +185,14 @@ Namespace World
 
 #Region "Pathfinding"
         <Category("Pathfinding")> <[ReadOnly](True)> Public Property Parent As Node
-        <Category("Pathfinding")> <[ReadOnly](True)> Public Property Cost As Integer
-        <Category("Pathfinding")> <[ReadOnly](True)> Public Property Distance As Integer
-        ''' <summary>
-        ''' Astar pathfinding algorithm properties.
-        ''' </summary>
-        <Category("Pathfinding")> <[ReadOnly](True)>
-        Public ReadOnly Property CostDistance As Integer
-            Get
-                Return Me.Cost + Me.Distance
-            End Get
-        End Property
+        <Category("Pathfinding")> <[ReadOnly](True)> Public Property G As Integer
+        <Category("Pathfinding")> <[ReadOnly](True)> Public Property H As Integer
+        <Category("Pathfinding")> <[ReadOnly](True)> Public Property F As Integer
 
-        ''' <summary>
-        ''' Astar pathfinding algorithm properties.
-        ''' </summary>
-        Public Sub SetDistance(x As Integer, y As Integer)
-            Me.Distance = Math.Abs(x - Me.Rectangle.X) + Math.Abs(y - Me.Rectangle.Y)
-        End Sub
+        Public Shared Function GetScore(orig As Node, dest As Node) As Integer
+            Return Math.Abs(dest.Rectangle.X - orig.Rectangle.X) + Math.Abs(dest.Rectangle.Y - orig.Rectangle.Y)
+        End Function
+
 #End Region
 
         Public Overrides Function ToString() As String

@@ -1,8 +1,8 @@
 ﻿Imports Gridmaster.Environment
+Imports Gridmaster.Plugins
 Imports Gridmaster.World
 Imports System.ComponentModel
 Imports System.Drawing.Drawing2D
-Imports System.Threading
 
 Public Class Session
     Inherits Engine
@@ -12,9 +12,11 @@ Public Class Session
     <Browsable(False)> Public Property CSize As Integer
     <Browsable(False)> Public Property CZoom As Single
     <Browsable(False)> Public Property Terrain As Terrain
+    <Browsable(False)> Public Property Plugins As Hoster
     <Browsable(False)> Public Property Scale As Single
     <Browsable(False)> Public Property Active As Node
     <Browsable(False)> Public Property Time As Timeline
+    <Browsable(False)> Public Property Pathfinder As Pathfinder
     <Browsable(False)> Public Property Font As Dictionary(Of Fonts, Font)
 
     Public Event SelectionChanged(n As Node)
@@ -33,11 +35,14 @@ Public Class Session
         Me.Terrain = New Terrain(Me)
         Me.Camera = New Camera(Me)
         Me.Time = New Timeline(Me)
+        Me.Pathfinder = New Pathfinder(Me)
 
         Me.Font = New Dictionary(Of Fonts, Font)
         Me.Font.Add(Fonts.Small, New Font("Lucida Console", 8, FontStyle.Regular))
         Me.Font.Add(Fonts.Large, New Font("Consolas", 12, FontStyle.Regular))
 
+        Me.Plugins = New Hoster(Me)
+        Me.Plugins.Load()
 
     End Sub
 
@@ -64,7 +69,7 @@ Public Class Session
     ''' Overrides the render update
     ''' </summary>
     Public Overrides Sub Update()
-
+        Me.Pathfinder.Update()
     End Sub
 
     ''' <summary>

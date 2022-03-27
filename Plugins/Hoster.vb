@@ -3,7 +3,7 @@ Imports System.Reflection
 
 Namespace Plugins
     Public Class Hoster
-        Public Const EXTENSION As String = ".dll"
+        Public Const EXTENSION As String = "*.dll"
         Public Property Session As Session
         Public Property Paths As String()
         Public Property Plugins As Dictionary(Of String, Plugin)
@@ -23,7 +23,7 @@ Namespace Plugins
             If (Me.Scan(AddressOf Me.TryLoad) > 0) Then
                 Dim result As Boolean = True
                 For Each plug In Me.Plugins.Values
-                    plug.Initialize(Me.Session)
+                    plug.RunOnce(Me.Session)
                     If (Not plug.OnLoad AndAlso result) Then
                         result = False
                     End If
@@ -36,7 +36,7 @@ Namespace Plugins
         ''' Load internal plugin type.
         ''' </summary>
         Public Function Load(type As Type) As Boolean
-            If (type.IsAssignableFrom(GetType(IPlugin))) Then
+            If (type.IsAssignableFrom(GetType(Plugin))) Then
                 Me.Plugins.Add(type.Name, CType(Activator.CreateInstance(type), Plugin))
                 Return True
             End If
@@ -90,15 +90,19 @@ Namespace Plugins
         ''' Scan paths and assert result to a load method.
         ''' </summary>
         Public Function Scan(loader As Func(Of String, Boolean)) As Integer
-            SyncLock Me.Plugins
-                Me.Plugins.Clear()
-                For Each current In Me.Paths
-                    For Each fn In Directory.GetFiles(Path.Combine(current, Hoster.EXTENSION), Hoster.EXTENSION)
-                        loader(fn)
+            Try
+                SyncLock Me.Plugins
+                    Me.Plugins.Clear()
+                    For Each current In Me.Paths
+                        For Each fn In Directory.GetFiles(current, Hoster.EXTENSION)
+                            loader(fn)
+                        Next
                     Next
-                Next
-            End SyncLock
-            Return Me.Plugins.Count
+                End SyncLock
+                Return Me.Plugins.Count
+            Catch ex As Exception
+                Return Me.Plugins.Count
+            End Try
         End Function
 
         ''' <summary>
@@ -108,15 +112,15 @@ Namespace Plugins
             Try
                 If (File.Exists(fn)) Then
                     Dim asm As Assembly = Assembly.LoadFrom(fn)
-                    For Each type In asm.GetTypes()
-                        If (type.IsAssignableFrom(GetType(IPlugin))) Then
+                    For Each type In asm.GetTypes.Where(Function(x) Not x.IsAbstract AndAlso x.IsClass And x.IsPublic)
+                        If (GetType(Plugin).IsAssignableFrom(type)) Then
                             Me.Plugins.Add(type.Name, CType(Activator.CreateInstance(type), Plugin))
                         End If
                     Next
                     Return True
                 End If
                 Return False
-            Catch
+            Catch ex As Exception
                 'Catch ex As BadImageFormatException     : assembly is invalid
                 'Catch ex As FileLoadException           : assembly is in use (locked)
                 'Catch ex As UnauthorizedAccessException : no access
