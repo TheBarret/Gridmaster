@@ -1,9 +1,9 @@
 Gridmaster is a simple project to learn how to make the following things:
 
-- 2D Engine   (fps capped)
-- Map         (Containg nodes that respresent a rectangle)
-- Terrain     (using Perlin alg. to create 2d noise data)
-- Camera      (a camera that only shows a specific area to limit loop weight)
+- 2D Engine   (fps capped renderer)
+- Map         (Node grid with extensive functions)
+- Terrain     (Perlin noise)
+- Camera      (Camera that can move with ASWD-keys)
 - Timesystem  (Keeps tracking, days, months and years as wel for seasons)
 - Plugins     (Able to load in extensions dynamically)
 - Pathfinding (A* pathfinding system)
